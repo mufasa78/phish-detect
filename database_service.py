@@ -8,16 +8,35 @@ import pandas as pd
 from email.utils import parsedate_to_datetime
 import email.utils
 from dotenv import load_dotenv
+import streamlit as st
 
 
 class DatabaseService:
     """Service for managing phishing detection database operations"""
     
     def __init__(self):
-        # Load environment variables from .env.local file
-        load_dotenv('.env.local')
+        # Load environment variables - try Streamlit secrets first, then .env.local
+        self._load_config()
         self.connection = None
         self._connect()
+    
+    def _load_config(self):
+        """Load database configuration from Streamlit secrets or .env.local"""
+        try:
+            # Try Streamlit secrets first (for cloud deployment)
+            if hasattr(st, 'secrets') and 'database' in st.secrets:
+                # Set environment variables from Streamlit secrets
+                os.environ['PGDATABASE'] = st.secrets.database.PGDATABASE
+                os.environ['PGHOST'] = st.secrets.database.PGHOST
+                os.environ['PGPORT'] = str(st.secrets.database.PGPORT)
+                os.environ['PGUSER'] = st.secrets.database.PGUSER
+                os.environ['PGPASSWORD'] = st.secrets.database.PGPASSWORD
+            else:
+                # Fallback to .env.local for local development
+                load_dotenv('.env.local')
+        except Exception:
+            # Fallback to .env.local if Streamlit secrets fail
+            load_dotenv('.env.local')
     
     def _connect(self):
         """Establish database connection with manual transaction control"""
