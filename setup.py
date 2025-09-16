@@ -6,9 +6,9 @@ setup(
     description="Phishing Email Detection Tool",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
-    author="Your Name",
-    author_email="your.email@example.com",
-    url="https://github.com/yourusername/phish-detect",
+    author="Stanley Gathekia",
+    author_email="njorogestan12@gmail.com",
+    url="https://github.com/mufasa78/phish-detect",
     py_modules=["app", "database_service", "email_parser", "phishing_detector", "advanced_parser"],
     install_requires=[
         "beautifulsoup4>=4.13.5",
