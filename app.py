@@ -1,12 +1,12 @@
 import streamlit as st
 import pandas as pd
 import io
-from email_parser import EmailParser
-from phishing_detector import PhishingDetector
+from phish_detect.email_parser import EmailParser
+from phish_detect.phishing_detector import PhishingDetector
 
 # Import database service with error handling for deployment
 try:
-    from database_service import DatabaseService
+    from phish_detect.database_service import DatabaseService
     DATABASE_AVAILABLE = True
 except Exception as e:
     st.error(f"Database connection issue: {str(e)}")

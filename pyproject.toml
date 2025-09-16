@@ -5,6 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "phish-detect"
 version = "1.0.0"
+description = "A comprehensive phishing email detection system"
 dependencies = [
     "beautifulsoup4>=4.13.5",
     "openpyxl>=3.1.5", 
@@ -13,3 +14,7 @@ dependencies = [
     "python-dotenv>=1.0.0",
     "streamlit>=1.49.1",
 ]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["phish_detect*"]
