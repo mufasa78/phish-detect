@@ -5,17 +5,19 @@ A comprehensive phishing email detection system with advanced parsing capabiliti
 """
 
 __version__ = "1.0.0"
-__author__ = "Phish Detect Team"
+__author__ = "Mufasa"
 
 # Import main modules for easy access
 from .phishing_detector import PhishingDetector
 from .email_parser import EmailParser
-from .advanced_parser import AdvancedParser
+from .advanced_parser import AdvancedEmailParser, SegmentType, AdvancedSegment
 from .database_service import DatabaseService
 
 __all__ = [
     "PhishingDetector",
     "EmailParser", 
-    "AdvancedParser",
+    "AdvancedEmailParser",
+    "SegmentType",
+    "AdvancedSegment",
     "DatabaseService"
 ]
