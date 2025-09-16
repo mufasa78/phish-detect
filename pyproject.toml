@@ -34,7 +34,7 @@ Homepage = "https://github.com/yourusername/phish-detect"
 Repository = "https://github.com/yourusername/phish-detect"
 
 [tool.setuptools]
-packages = ["phish_detect"]
+py-modules = ["app", "database_service", "email_parser", "phishing_detector", "advanced_parser"]
 
 [tool.setuptools.package-dir]
 "" = "."

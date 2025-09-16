@@ -9,7 +9,7 @@ setup(
     author="Your Name",
     author_email="your.email@example.com",
     url="https://github.com/yourusername/phish-detect",
-    packages=find_packages(),
+    py_modules=["app", "database_service", "email_parser", "phishing_detector", "advanced_parser"],
     install_requires=[
         "beautifulsoup4>=4.13.5",
         "openpyxl>=3.1.5",
