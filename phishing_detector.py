@@ -39,9 +39,9 @@ class PhishingDetector:
         
         # Analyze each rule in the setup file
         for _, rule in self.setup_rules.iterrows():
-            start_segment = rule['start_segment'].lower().strip()
-            end_segment = rule['end_segment'].lower().strip()
-            suspicious_phrase = rule['suspicious_phrase'].strip()
+            start_segment = str(rule['start_segment']).lower().strip()
+            end_segment = str(rule['end_segment']).lower().strip()
+            suspicious_phrase = str(rule['suspicious_phrase']).strip()
             
             self.results['total_checks'] += 1
             
@@ -155,4 +155,4 @@ class PhishingDetector:
                     'full_segment_content': content
                 }
         
-        return None
+        return {}

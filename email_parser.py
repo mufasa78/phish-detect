@@ -1,4 +1,5 @@
 import email
+import email.message
 import re
 from typing import Dict, List, Tuple, Optional
 
@@ -126,13 +127,21 @@ class EmailParser:
                 if content_type == "text/plain" or content_type == "text/html":
                     charset = part.get_content_charset() or 'utf-8'
                     try:
-                        body += part.get_payload(decode=True).decode(charset, errors='ignore')
+                        payload = part.get_payload(decode=True)
+                        if isinstance(payload, bytes):
+                            body += payload.decode(charset, errors='ignore')
+                        else:
+                            body += str(payload)
                     except:
                         body += str(part.get_payload())
         else:
             charset = msg.get_content_charset() or 'utf-8'
             try:
-                body = msg.get_payload(decode=True).decode(charset, errors='ignore')
+                payload = msg.get_payload(decode=True)
+                if isinstance(payload, bytes):
+                    body = payload.decode(charset, errors='ignore')
+                else:
+                    body = str(payload)
             except:
                 body = str(msg.get_payload())
         
