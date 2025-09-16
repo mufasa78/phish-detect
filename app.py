@@ -3,6 +3,7 @@ import pandas as pd
 import io
 from email_parser import EmailParser
 from phishing_detector import PhishingDetector
+from database_service import DatabaseService
 
 def main():
     st.set_page_config(
@@ -93,6 +94,66 @@ def main():
             st.info("📤 Please upload an email file to analyze")
             email_content = None
     
+    # Database Statistics Section
+    st.markdown("---")
+    st.subheader("📊 Database Statistics")
+    
+    col1, col2 = st.columns([2, 1])
+    
+    with col1:
+        if st.button("📈 View Database Report", help="View statistics about stored phishing detections"):
+            try:
+                db_service = DatabaseService()
+                report = db_service.get_occurrence_report()
+                
+                # Display summary statistics
+                summary = report.get('summary', {})
+                col_a, col_b, col_c = st.columns(3)
+                with col_a:
+                    st.metric("Total Flagged Emails", summary.get('total_flagged_emails', 0))
+                with col_b:
+                    st.metric("Total Findings", summary.get('total_findings', 0))
+                with col_c:
+                    st.metric("Unique Emails", summary.get('unique_emails', 0))
+                
+                # Top suspicious phrases
+                if report.get('top_phrases'):
+                    st.subheader("🎯 Top Suspicious Phrases")
+                    phrases_df = pd.DataFrame(report['top_phrases'])
+                    st.dataframe(phrases_df, use_container_width=True)
+                
+                # Recent activity
+                if report.get('recent_activity'):
+                    st.subheader("⏰ Recent Flagged Emails")
+                    recent_df = pd.DataFrame(report['recent_activity'])
+                    st.dataframe(recent_df, use_container_width=True)
+                
+                db_service.close()
+                
+            except Exception as e:
+                st.error(f"❌ Failed to load database report: {str(e)}")
+    
+    with col2:
+        if st.button("📋 View All Flagged Emails", help="View list of all emails stored in database"):
+            try:
+                db_service = DatabaseService()
+                flagged_emails = db_service.get_flagged_emails(limit=20)
+                
+                if flagged_emails:
+                    st.subheader("📧 Recently Flagged Emails")
+                    emails_df = pd.DataFrame(flagged_emails)
+                    # Select relevant columns for display
+                    display_columns = ['id', 'email_subject', 'email_from', 'total_suspicious_findings', 'flagged_at']
+                    available_columns = [col for col in display_columns if col in emails_df.columns]
+                    st.dataframe(emails_df[available_columns], use_container_width=True)
+                else:
+                    st.info("No flagged emails found in database")
+                
+                db_service.close()
+                
+            except Exception as e:
+                st.error(f"❌ Failed to load flagged emails: {str(e)}")
+    
     # Analysis section
     st.markdown("---")
     st.subheader("🔍 Phishing Analysis")
@@ -108,6 +169,16 @@ def main():
                     # Run phishing detection
                     detector = PhishingDetector(setup_df)
                     results = detector.analyze_email(parsed_email)
+                    
+                    # Store results in database if suspicious
+                    if results['is_suspicious']:
+                        try:
+                            db_service = DatabaseService()
+                            flagged_email_id = db_service.store_flagged_email(parsed_email, results)
+                            st.success(f"🗄️ Suspicious email stored in database (ID: {flagged_email_id})")
+                            db_service.close()
+                        except Exception as db_error:
+                            st.warning(f"⚠️ Analysis completed but failed to store in database: {str(db_error)}")
                     
                     # Display results
                     display_results(results, parsed_email)
