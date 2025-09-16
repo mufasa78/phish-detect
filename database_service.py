@@ -7,12 +7,15 @@ from typing import Dict, List, Optional, Tuple
 import pandas as pd
 from email.utils import parsedate_to_datetime
 import email.utils
+from dotenv import load_dotenv
 
 
 class DatabaseService:
     """Service for managing phishing detection database operations"""
     
     def __init__(self):
+        # Load environment variables from .env.local file
+        load_dotenv('.env.local')
         self.connection = None
         self._connect()
     
